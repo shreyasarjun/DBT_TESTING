@@ -25,7 +25,8 @@ jobs:
 
       - name: Install dbt-jobs-as-code
         run: pip install dbt-jobs-as-code~=0.7.0
-
+      
+      # Run job
       - name: Run dbt-jobs-as-code
         run: dbt-jobs-as-code sync jobs/my_jobs.yml --vars-yml jobs/dev_vars.yml --limit-projects-envs-to-yml
         env: 
