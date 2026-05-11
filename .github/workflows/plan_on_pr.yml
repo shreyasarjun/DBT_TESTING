@@ -29,4 +29,4 @@ jobs:
         env: 
           DBT_API_KEY: "${{secrets.DBT_API_KEY}}"
           # DBT_BASE_URL is optional
-          # DBT_BASE_URL: "${{secrets.DBT_BASE_URL}}"
+          DBT_BASE_URL: "${{secrets.DBT_BASE_URL}}"
