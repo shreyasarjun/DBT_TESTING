@@ -15,7 +15,7 @@ jobs:
     name: "Automatic dbt JOB Creation"
     run_generate_sources: true
     schedule:
-      cron: "0 */2 * * *"
+      cron: "0 0 * * 0"
     settings:
       target_name: dev
       threads: 4
