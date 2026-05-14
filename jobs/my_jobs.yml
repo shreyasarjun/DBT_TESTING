@@ -12,7 +12,7 @@ jobs:
     execution:
       timeout_seconds: 0
     generate_docs: false
-    name: "Dev Testing"
+    name: "Dev Testing1"
     run_generate_sources: true
     schedule:
       cron: "0 0 * * 0"
