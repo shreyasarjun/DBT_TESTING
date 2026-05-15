@@ -12,7 +12,7 @@ jobs:
     execution:
       timeout_seconds: 0
     generate_docs: false
-    name: "[{{ env_type }}] Testing Job"
+    name: "[{{ env_type }}] Testing Job1"
     run_generate_sources: true
     schedule:
       cron: "0 0 * * 0"
