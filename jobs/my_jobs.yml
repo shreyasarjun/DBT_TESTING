@@ -12,7 +12,7 @@ jobs:
     execution:
       timeout_seconds: 0
     generate_docs: false
-    name: "Testing1 JOb"
+    name: "[{{ env_type }}] dbt sample"
     run_generate_sources: true
     schedule:
       cron: "0 0 * * 0"

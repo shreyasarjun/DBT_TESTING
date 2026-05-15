@@ -1,14 +1,9 @@
 name: dbt Cloud Jobs CI/CD
 
-run-name: Running dbt-jobs-as-code for ${{ github.event_name == 'pull_request' && github.event.action != 'closed' && 'plan' || 'sync' }}
+run-name: Syncing dbt Cloud jobs for branch ${{ github.ref_name }}
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
+  push:
     branches:
       - main
       - uat
@@ -25,9 +20,8 @@ env:
     }
 
 jobs:
-  plan-dbt-jobs:
-    name: Plan dbt Cloud jobs
-    if: github.event.action != 'closed'
+  sync-dbt-jobs:
+    name: Sync dbt Cloud jobs
     runs-on: ubuntu-latest
 
     steps:
@@ -48,55 +42,13 @@ jobs:
       - name: Determine vars file for target branch
         id: vars-file
         run: |
-          TARGET_BRANCH="${{ github.base_ref }}"
+          TARGET_BRANCH="${{ github.ref_name }}"
           echo "Target branch: $TARGET_BRANCH"
 
           VARS_FILE=$(echo '${{ env.BRANCH_FILE_MAP }}' | jq -r --arg branch "$TARGET_BRANCH" '.[$branch] // empty')
 
           if [ -z "$VARS_FILE" ]; then
             echo "Branch $TARGET_BRANCH not found in BRANCH_FILE_MAP. Exiting."
-            exit 1
-          fi
-
-          echo "Using vars file: $VARS_FILE"
-          echo "vars_file=$VARS_FILE" >> "$GITHUB_OUTPUT"
-
-      - name: Run dbt-jobs-as-code plan
-        run: dbt-jobs-as-code plan jobs/my_jobs.yml --vars-yml "${{ steps.vars-file.outputs.vars_file }}" --limit-projects-envs-to-yml
-        env:
-          DBT_API_KEY: ${{ secrets.DBT_API_KEY }}
-          DBT_BASE_URL: ${{ secrets.DBT_BASE_URL }}
-
-  sync-dbt-jobs:
-    name: Sync dbt Cloud jobs
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-          pip install "dbt-jobs-as-code~=0.7.0"
-
-      - name: Determine vars file for merged branch
-        id: vars-file
-        run: |
-          MERGED_BRANCH="${{ github.base_ref }}"
-          echo "Merged to branch: $MERGED_BRANCH"
-
-          VARS_FILE=$(echo '${{ env.BRANCH_FILE_MAP }}' | jq -r --arg branch "$MERGED_BRANCH" '.[$branch] // empty')
-
-          if [ -z "$VARS_FILE" ]; then
-            echo "Branch $MERGED_BRANCH not found in BRANCH_FILE_MAP. Exiting."
             exit 1
           fi
 
